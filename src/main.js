@@ -4,6 +4,7 @@ import { createVuetify } from 'vuetify';
 import 'vuetify/styles';
 import * as components from 'vuetify/components';
 import * as directives from 'vuetify/directives';
+import router from './router/index.js'; 
 
 // Create Vuetify instance
 const vuetify = createVuetify({
@@ -11,5 +12,12 @@ const vuetify = createVuetify({
   directives,
 });
 
-// Create and mount the Vue app
-createApp(App).use(vuetify).mount('#app');
+// Create the Vue app instance
+const app = createApp(App);
+
+// Use Vuetify and Router in the Vue app instance
+app.use(vuetify);
+app.use(router);
+
+// Mount the app to the DOM element with id 'app'
+app.mount('#app');

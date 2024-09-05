@@ -21,7 +21,7 @@
         </v-navigation-drawer>
 
         <!-- Application Bar -->
-        <v-app-bar :elevation="4" floating="true" style="position:fixed" title="Workouts"></v-app-bar>
+        <v-app-bar :elevation="4" :floating="true" style="position:fixed" title="Workouts"></v-app-bar>
 
         <!-- Main Content -->
         <v-main style="min-height: 300px; margin:25px">
@@ -29,18 +29,19 @@
             <!-- Dynamic Cards Based on User Input -->
             <div v-for="(card, index) in cards" :key="index" style="width: 23%; margin-right: 15px; margin-bottom: 15px">
               <v-card :color="card.color" :elevation="4">
-                <v-card-title class="text-h5">
-                  {{ card.title }}
-                </v-card-title>
+                <v-card-title class="text-h5">{{ card.title }}</v-card-title>
                 <v-card-subtitle>{{ card.workoutType }}</v-card-subtitle>
                 <v-card-actions>
-                  <v-btn variant="text">Add Workout</v-btn>
+                  <!-- Use router-link for navigation -->
+                  <router-link :to="{ name: 'WorkoutDetails', params: { workoutTitle: card.title } }">
+                    <v-btn variant="text">Add Workout</v-btn>
+                  </router-link>
                 </v-card-actions>
               </v-card>
             </div>
           </div>
         </v-main>
-
+        
         <!-- Floating Action Button to Add New Card -->
         <v-btn
           fab
@@ -57,9 +58,6 @@
         <!-- Dialog for Adding New Card -->
         <v-dialog v-model="showForm" persistent max-width="400px">
           <v-card>
-            <v-card-title>
-              <span class="text-h5">Add New Workout</span>
-            </v-card-title>
             <v-card-text>
               <v-form @submit.prevent="addCard">
                 <v-text-field label="Title" v-model="newCard.title"></v-text-field>
@@ -86,48 +84,32 @@
 </template>
 
 <script setup>
-import { ref } from 'vue'
+import { ref } from 'vue';
 
-// State for showing/hiding the form
-const showForm = ref(false)
-
-// State for new card data
+const showForm = ref(false);
 const newCard = ref({
   title: '',
   workoutType: '',
-})
+});
+const cards = ref([]);
 
-// State for the list of cards
-const cards = ref([])
+// Function to get a random color for the card
+const getRandomColor = () => {
+  const colors = ['#ff3300', '#ff6666', 'orange', 'green', 'red'];
+  return colors[Math.floor(Math.random() * colors.length)];
+};
 
 // Function to add a new card
 const addCard = () => {
   if (newCard.value.title && newCard.value.workoutType) {
-    // Add a new card to the cards array
     cards.value.push({
       title: newCard.value.title,
       workoutType: newCard.value.workoutType,
       color: getRandomColor(),
-    })
-
-    // Reset form data
-    newCard.value.title = ''
-    newCard.value.workoutType = ''
-    showForm.value = false
+    });
+    newCard.value.title = '';
+    newCard.value.workoutType = '';
+    showForm.value = false;
   }
-}
-
-// Helper function to get a random color for the card
-const getRandomColor = () => {
-  const colors = ['#ff3300', '#ff6666', 'orange', 'green', 'red']
-  return colors[Math.floor(Math.random() * colors.length)]
-}
+};
 </script>
-
-<style scoped>
-.el-menu--horizontal > .el-menu-item:nth-child(1) {
-  margin-right: auto;
-  display: flex;
-  align-items: center;
-}
-</style>
