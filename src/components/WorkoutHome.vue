@@ -17,6 +17,7 @@
             <v-list-item prepend-icon="mdi-home-city" title="Dashboard" @click="$router.push('/')"></v-list-item>
             <v-list-item prepend-icon="mdi-account" title="Stats" @click="$router.push('/stats')"></v-list-item>
             <v-list-item prepend-icon="mdi-account-group-outline" title="Log" @click="$router.push('/log')"></v-list-item>
+            <v-list-item prepend-icon="mdi-logout" title="Logout" @click="logout"></v-list-item> <!-- Logout Button -->
           </v-list>
         </v-navigation-drawer>
 
@@ -88,7 +89,7 @@
 <script setup>
 import { ref, onMounted } from 'vue';
 import axios from 'axios';
-
+import store from '../store'
 const showForm = ref(false);
 const newCard = ref({
   title: '',
@@ -142,6 +143,18 @@ const addCard = async () => {
 const handleWorkoutAdded = (title) => {
   console.log('Workout added:', title);
   // You can now use this title as needed within this component.
+};
+
+// Function to handle logout
+const logout = () => {
+  // Remove token from local storage or session storage
+  localStorage.removeItem('token');
+  
+  // Dispatch Vuex action to update store
+  store.dispatch('logoutUser');
+  
+  // Redirect to login page or home
+  window.location.href = '/home';
 };
 
 // Fetch workouts when the component is mounted

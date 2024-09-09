@@ -17,6 +17,7 @@
           <v-list-item prepend-icon="mdi-home-city" title="Home" @click="$router.push('/')"></v-list-item>
           <v-list-item prepend-icon="mdi-help-circle" title="FAQ" @click="$router.push('/faq')"></v-list-item>
           <v-list-item prepend-icon="mdi-email" title="Contact" @click="$router.push('/contact')"></v-list-item>
+          
         </v-list>
       </v-navigation-drawer>
   

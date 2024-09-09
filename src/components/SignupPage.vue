@@ -67,18 +67,54 @@
       };
     },
     methods: {
-      signup() {
-        if (this.password !== this.confirmPassword) {
-          alert("Passwords do not match!");
-          return;
-        }
-        // Proceed with the signup process
-        // e.g., make an API call to register the user
-      },
-      goToLoginPage() {
-        this.$router.push("/login");
-      },
-    },
+  async signup() {
+    if (this.password !== this.confirmPassword) {
+      alert("Passwords do not match!");
+      return;
+    }
+
+    // Basic validation
+    if (!this.username || !this.email || !this.password) {
+      alert("Please fill in all the fields!");
+      return;
+    }
+
+    try {
+      // Send POST request to the backend for signup
+      const response = await fetch('http://localhost:5000/signup', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          username: this.username,
+          email: this.email,
+          password: this.password,
+        }),
+      });
+
+      if (!response.ok) {
+        const error = await response.text();
+        throw new Error(error);
+      }
+
+      const result = await response.json();
+      alert(`User created successfully! Welcome, ${result.username}`);
+      
+      // Redirect to login page after successful signup
+      this.$router.push('/login');
+      
+    } catch (error) {
+      console.error('Error during signup:', error);
+      alert('Signup failed! Please try again.');
+    }
+  },
+
+  goToLoginPage() {
+    this.$router.push("/login");
+  },
+}
+
   }
   </script>
   

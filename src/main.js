@@ -1,10 +1,12 @@
+// src/main.js or src/app.js
 import { createApp } from 'vue';
 import App from './App.vue';
 import { createVuetify } from 'vuetify';
 import 'vuetify/styles';
 import * as components from 'vuetify/components';
 import * as directives from 'vuetify/directives';
-import router from './router/index.js'; 
+import router from './router/index.js';
+import store from './store'; // Import Vuex store correctly
 
 import ElementPlus from 'element-plus';
 import 'element-plus/dist/index.css'; // Import Element Plus styles
@@ -19,9 +21,10 @@ const vuetify = createVuetify({
 // Create Vue app instance
 const app = createApp(App);
 
-// Use Vuetify and Router in the Vue app instance
+// Use Vuetify, Router, and Vuex in the Vue app instance
 app.use(vuetify);
 app.use(router);
+app.use(store); // Use Vuex store
 
 // Use Element Plus and register icons globally
 app.use(ElementPlus);
