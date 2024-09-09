@@ -6,18 +6,28 @@ import * as components from 'vuetify/components';
 import * as directives from 'vuetify/directives';
 import router from './router/index.js'; 
 
+import ElementPlus from 'element-plus';
+import 'element-plus/dist/index.css'; // Import Element Plus styles
+import * as ElIcons from '@element-plus/icons-vue'; // Import Element Plus icons
+
 // Create Vuetify instance
 const vuetify = createVuetify({
   components,
   directives,
 });
 
-// Create the Vue app instance
+// Create Vue app instance
 const app = createApp(App);
 
 // Use Vuetify and Router in the Vue app instance
 app.use(vuetify);
 app.use(router);
+
+// Use Element Plus and register icons globally
+app.use(ElementPlus);
+Object.keys(ElIcons).forEach(key => {
+  app.component(key, ElIcons[key]);
+});
 
 // Mount the app to the DOM element with id 'app'
 app.mount('#app');
