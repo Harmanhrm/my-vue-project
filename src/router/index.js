@@ -4,6 +4,7 @@ import Workouts from '../components/WorkoutHome.vue';
 import HomePage from '../components/HomePage.vue';
 import LoginForm from '../components/LoginPage.vue';
 import SignupForm from '../components/SignupPage.vue';
+import HistoryPage from '../components/HistoryPage.vue';
 import store from '../store'; // Import Vuex store
 
 const routes = [
@@ -12,6 +13,7 @@ const routes = [
   { path: '/home', component: HomePage },
   { path: '/login', component: LoginForm },
   { path: '/signup', component: SignupForm },
+  { path: '/history', component: HistoryPage },
   { path: '/workout/:workoutTitle', name: 'WorkoutDetails', component: WorkoutDetails, props: true },
 ];
 

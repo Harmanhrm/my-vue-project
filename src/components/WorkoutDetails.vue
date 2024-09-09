@@ -1,6 +1,7 @@
 <template>
   <v-app>
-    <v-navigation-drawer permanent style="position:fixed" :elevation="2" location="left">
+    <!-- Navigation Drawer -->
+    <v-navigation-drawer app permanent style="position:fixed" :elevation="2">
       <template v-slot:prepend>
         <v-list-item
           lines="two"
@@ -17,14 +18,13 @@
       </v-list>
     </v-navigation-drawer>
 
+    <!-- App Bar -->
     <v-app-bar style="padding-left: 10px; position:fixed" :elevation="4" :floating="true">
-      <!-- Static Breadcrumbs -->
-      <el-breadcrumb separator="/">
-        <el-breadcrumb-item :to="{ path: '/' }">Workouts</el-breadcrumb-item>
-        <el-breadcrumb-item>
-          <a href="/">{{ workoutTitle }}</a>
-        </el-breadcrumb-item>
-      </el-breadcrumb>
+      <v-breadcrumbs :items="breadcrumbItems" separator="/">
+        <template v-slot:divider>
+          <v-icon>mdi-chevron-right</v-icon>
+        </template>
+      </v-breadcrumbs>
     </v-app-bar>
 
     <!-- Main Content Area -->
@@ -33,6 +33,10 @@
         <v-card-title class="text-h5">
           {{ workoutTitle }}
         </v-card-title>
+        <v-btn @click="viewHistory" class="ml-3" text small>
+  View History
+</v-btn>
+
 
         <!-- Form for adding reps, weight, and RPE -->
         <v-form>
@@ -47,12 +51,11 @@
               <v-text-field label="RPE" v-model="rpe" type="number"></v-text-field>
             </v-col>
           </v-row>
-          <v-btn style="margin-left: 18px; margin-bottom:5px;" @click="addExercise">Add Set</v-btn>
+          <v-btn style="margin-left: 18px; margin-bottom:5px;" @click="addSet">Add Set</v-btn>
         </v-form>
 
-        
-         <!-- Completed Sets and Notes Side by Side -->
-         <v-row>
+        <!-- Completed Sets and Notes Side by Side -->
+        <v-row>
           <v-col cols="6">
             <v-card-title class="text-h6">Completed Sets</v-card-title>
             <v-list>
@@ -73,47 +76,129 @@
 
         <!-- Button to complete workout -->
         <v-btn
-        color="red" class="fixed-button" fab>Complete Workout</v-btn>
+          color="red"
+          class="fixed-button"
+          @click="completeWorkout"
+          fab
+        >
+          Complete Workout
+        </v-btn>
       </v-card>
     </v-main>
   </v-app>
 </template>
 
-
-
 <script setup>
-import { ref, defineEmits, defineProps } from 'vue';
+import { ref, defineProps } from 'vue';
+import { useRouter } from 'vue-router';
 
-// Declare emit with defineEmits
-const emit = defineEmits(['workoutAdded']);
+const router = useRouter();
 
-// Define props
+const viewHistory = () => {
+  router.push({ path: '/history', query: { title: props.workoutTitle } });
+};
 const props = defineProps({
   workoutTitle: String,
 });
 
 // Local state
-const sets = ref(0);
 const reps = ref(0);
 const weight = ref(0);
+const rpe = ref(0);
 const exercises = ref([]);
+const note = ref('');
+const userid = ref(null);
 
-// Function to add an exercise
-const addExercise = () => {
+// Function to add a set
+const addSet = () => {
   exercises.value.push({
-    sets: sets.value,
     reps: reps.value,
     weight: weight.value,
+    rpe: rpe.value
   });
 
-  // Emit the workout title when an exercise is added
-  emit('workoutAdded', props.workoutTitle);
-
   // Reset input fields
-  sets.value = 0;
   reps.value = 0;
   weight.value = 0;
+  rpe.value = 0;
 };
+
+// Function to get user ID based on workout title
+const getUserIdByWorkoutTitle = async (title) => {
+  try {
+    const response = await fetch('http://localhost:5000/get-userid', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ title })
+    });
+
+    if (response.ok) {
+      const data = await response.json();
+      userid.value = data.userid;
+    } else {
+      console.error('Error fetching user ID:', response.statusText);
+    }
+  } catch (error) {
+    console.error('Error fetching user ID:', error);
+  }
+};
+
+// Function to complete workout and save to backend
+// Function to complete workout and save to backend
+const completeWorkout = async () => {
+  try {
+    // Retrieve and decode the token (assumed to be set somewhere)
+    const token = 'yourTokenHere'; // Make sure token is correctly retrieved/set
+
+    // Ensure userid is available before sending request
+    if (!userid.value) {
+      await getUserIdByWorkoutTitle(props.workoutTitle);
+    }
+
+    // Prepare workout data
+    const workoutData = {
+      userid: userid.value, // Ensure userid is correctly set
+      title: props.workoutTitle,
+      exercises: [
+        {
+          sets: exercises.value // Single exercise with multiple sets
+        }
+      ],
+      note: note.value // Note about the workout
+    };
+
+    // Send request to save workout
+    const response = await fetch('http://localhost:5000/save-workout', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}` // Include the token in the headers
+      },
+      body: JSON.stringify(workoutData),
+    });
+
+    if (!response.ok) {
+      throw new Error('Failed to save workout');
+    }
+
+    // Clear the form and show success message
+    exercises.value = [];
+    note.value = '';
+    alert('Workout saved successfully!');
+  } catch (error) {
+    console.error('Error saving workout:', error);
+    alert('Error saving workout. Please try again.');
+  }
+};
+
+
+// Breadcrumb items
+const breadcrumbItems = [
+  { text: 'Workouts', to: '/' },
+  { text: props.workoutTitle }
+];
 </script>
 
 <style>
