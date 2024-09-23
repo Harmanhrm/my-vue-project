@@ -150,11 +150,15 @@ const getUserIdByWorkoutTitle = async (title) => {
 const completeWorkout = async () => {
   try {
     // Retrieve and decode the token (assumed to be set somewhere)
-    const token = 'yourTokenHere'; // Make sure token is correctly retrieved/set
+    const token = localStorage.getItem('token'); // Retrieve token from localStorage
 
     // Ensure userid is available before sending request
     if (!userid.value) {
       await getUserIdByWorkoutTitle(props.workoutTitle);
+    }
+
+    if (!userid.value) {
+      throw new Error('User ID could not be retrieved');
     }
 
     // Prepare workout data
@@ -192,6 +196,7 @@ const completeWorkout = async () => {
     alert('Error saving workout. Please try again.');
   }
 };
+
 
 
 // Breadcrumb items

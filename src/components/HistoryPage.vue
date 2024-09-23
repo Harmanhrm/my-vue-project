@@ -38,7 +38,11 @@
           <v-list>
             <v-list-item v-for="(exercise, index) in workoutHistory" :key="index">
               <v-list-item-content>
-                <div>Exercise {{ index + 1 }}:</div>
+                <div class="date-time-container">
+                  <div>{{ formattedDate(exercise.date) }}:</div>
+                  <div class="time">{{ formattedTime(exercise.date) }}</div>
+                </div>
+                <hr />
                 <v-list dense>
                   <v-list-item v-for="(set, setIndex) in exercise.sets" :key="setIndex">
                     <v-list-item-content>
@@ -55,13 +59,21 @@
   </template>
   
   <script setup>
+  import { format } from 'date-fns';
   import { ref, onMounted } from 'vue';
   import { useRoute } from 'vue-router';
   
   const route = useRoute();
   const workoutTitle = ref(route.query.title || ''); // Get workout title from query parameters
   const workoutHistory = ref([]);
-  
+  const formattedTime = (dateString) => {
+  const date = new Date(dateString);
+  return format(date, 'h:mm a');
+};
+  const formattedDate = (dateString) => {
+  const date = new Date(dateString);
+  return format(date, 'EEEE, MMMM d yyyy');
+};
   // Fetch workout history from backend
   const fetchWorkoutHistory = async () => {
   try {
@@ -85,6 +97,15 @@
   </script>
   
   <style>
+  .date-time-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.time {
+  margin-left: auto;
+}
   .fixed-button {
     position: fixed;
     bottom: 40px;
