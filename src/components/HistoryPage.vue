@@ -1,23 +1,9 @@
 <template>
     <v-app>
       <!-- Navigation Drawer -->
-      <v-navigation-drawer app permanent style="position:fixed" :elevation="2">
-        <template v-slot:prepend>
-          <v-list-item
-            lines="two"
-            prepend-avatar="https://randomuser.me/api/portraits/women/81.jpg"
-            title="Jane Smith"
-            subtitle="Logged in"
-          ></v-list-item>
-        </template>
-  
-        <v-list density="compact" nav>
-          <v-list-item prepend-icon="mdi-home-city" title="Home" @click="$router.push('/')"></v-list-item>
-          <v-list-item prepend-icon="mdi-account" title="My Account" @click="$router.push('/account')"></v-list-item>
-          <v-list-item prepend-icon="mdi-account-group-outline" title="Users" @click="$router.push('/users')"></v-list-item>
-        </v-list>
-      </v-navigation-drawer>
-  
+      <v-main style="margin-left: 0px; padding-top: 0px;">
+         Workouts
+        </v-main>
       <!-- App Bar -->
       <v-app-bar style="padding-left: 10px; position:fixed" :elevation="4" :floating="true">
         <v-breadcrumbs :items="breadcrumbItems" separator="/">
@@ -62,7 +48,7 @@
   import { format } from 'date-fns';
   import { ref, onMounted } from 'vue';
   import { useRoute } from 'vue-router';
-  
+  import { jwtDecode} from 'jwt-decode';
   const route = useRoute();
   const workoutTitle = ref(route.query.title || ''); // Get workout title from query parameters
   const workoutHistory = ref([]);
@@ -89,9 +75,22 @@
   }
 };
 
-  
+const username = ref('');
+
+const fetchUsernameFromToken = () => { // Retrieve username from token
+  const token = localStorage.getItem('token');
+  if (token) {
+    try {
+      const decodedToken = jwtDecode(token);
+      username.value = decodedToken.username; 
+    } catch (error) {
+      console.error('Error decoding token:', error);
+    }
+  }
+};
   // Fetch history on component mount
   onMounted(() => {
+    fetchUsernameFromToken();
     fetchWorkoutHistory();
   });
   </script>
