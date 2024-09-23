@@ -5,7 +5,8 @@ import HomePage from '../components/HomePage.vue';
 import LoginForm from '../components/LoginPage.vue';
 import SignupForm from '../components/SignupPage.vue';
 import HistoryPage from '../components/HistoryPage.vue';
-import store from '../store'; // Import Vuex store
+
+import { isLoggedIn } from '../utils/auth';
 
 const routes = [
   { path: '/', component: Workouts,  meta: { requiresAuth: true } },
@@ -25,15 +26,15 @@ const router = createRouter({
 // Navigation guard for protecting routes
 
 // Navigation guard for protecting routes
-router.beforeEach((to, from, next) => {
-  const requiresAuth = to.matched.some(record => record.meta.requiresAuth);
-  const isAuthenticated = store.getters.isAuthenticated;
-
-  if (requiresAuth && !isAuthenticated) {
-    next('/home');
+router.beforeEach((to, _, next) => {
+  if (to.matched.some(record => record.meta.requiresAuth)) {
+    if (!isLoggedIn()) {
+      next({ path: '/home' });
+    } else {
+      next();
+    }
   } else {
     next();
   }
 });
-
 export default router;

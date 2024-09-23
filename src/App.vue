@@ -1,23 +1,33 @@
 <template>
   <v-app>
     <v-card>
-      <v-layout>
+      <v-row>
         <!-- Conditional Navigation Drawer -->
-        <v-navigation-drawer permanent style="position: fixed;" :elevation="2" location="left">
+        <v-navigation-drawer v-if="loggedIn" permanent style="position:fixed" :elevation="2" location="left">
+          <template v-slot:prepend>
+            <v-list-item
+              lines="two"
+              prepend-avatar="https://randomuser.me/api/portraits/women/81.jpg"
+              :title="username"
+              subtitle="Logged in"
+            ></v-list-item>
+          </template>
+
+          <v-list density="compact" nav>
+            <v-list-item prepend-icon="mdi-home-city" title="Dashboard" @click="$router.push('/')"></v-list-item>
+            <v-list-item prepend-icon="mdi-account" title="Stats" @click="$router.push('/stats')"></v-list-item>
+            <v-list-item prepend-icon="mdi-account-group-outline" title="Log" @click="$router.push('/log')"></v-list-item>
+            <v-list-item prepend-icon="mdi-logout" title="Logout" @click="logout"></v-list-item>
+          </v-list>
+        </v-navigation-drawer>
+        
+        <v-navigation-drawer v-else permanent style="position: fixed;" :elevation="2" location="left">
           <template v-slot:prepend>
             <v-list-item lines="two">
               <v-list-item-content>
-                <v-btn text color="primary" @click="goToLoginSignup" v-if="!loggedIn">
+                <v-btn text color="primary" @click="goToLoginSignup">
                   Sign In / Sign Up
                 </v-btn>
-                <div v-else>
-                  <v-list-item
-                    lines="two"
-                    prepend-avatar="https://randomuser.me/api/portraits/women/81.jpg"
-                    :title="username"
-                    subtitle="Logged in"
-                  ></v-list-item>
-                </div>
               </v-list-item-content>
             </v-list-item>
           </template>
@@ -27,9 +37,6 @@
             <v-list-item prepend-icon="mdi-home-city" title="Home" @click="$router.push('/')"></v-list-item>
             <v-list-item prepend-icon="mdi-help-circle" title="FAQ" @click="$router.push('/faq')"></v-list-item>
             <v-list-item prepend-icon="mdi-email" title="Contact" @click="$router.push('/contact')"></v-list-item>
-            <v-list-item v-if="loggedIn" prepend-icon="mdi-account" title="Stats" @click="$router.push('/stats')"></v-list-item>
-            <v-list-item v-if="loggedIn" prepend-icon="mdi-account-group-outline" title="Log" @click="$router.push('/log')"></v-list-item>
-            <v-list-item v-if="loggedIn" prepend-icon="mdi-logout" title="Logout" @click="logout"></v-list-item>
           </v-list>
         </v-navigation-drawer>
 
@@ -41,8 +48,10 @@
         </v-app-bar>
 
         <!-- Main Content Area -->
-        
-      </v-layout>
+        <v-main style="margin-left: 0px; padding-top: 64px;">
+          <router-view />
+        </v-main>
+      </v-row>
     </v-card>
   </v-app>
 </template>
@@ -51,13 +60,12 @@
 import { ref, onMounted } from 'vue';
 import { isLoggedIn, getUsername } from './utils/auth';
 
-
 const loggedIn = ref(false);
 const username = ref('');
 
 const goToLoginSignup = () => {
   // Redirect to login/signup page
-  window.location.href = '/login-signup';
+  window.location.href = '/login';
 };
 
 const logout = () => {

@@ -3,24 +3,7 @@
     <v-card>
       <v-layout>
         <!-- Navigation Drawer -->
-        <v-navigation-drawer permanent style="position:fixed" :elevation="2" location="left">
-          <template v-slot:prepend>
-            <v-list-item
-              lines="two"
-              prepend-avatar="https://randomuser.me/api/portraits/women/81.jpg"
-              :title="username"
-              subtitle="Logged in"
-            ></v-list-item>
-          </template>
-
-          <v-list density="compact" nav>
-            <v-list-item prepend-icon="mdi-home-city" title="Dashboard" @click="$router.push('/')"></v-list-item>
-            <v-list-item prepend-icon="mdi-account" title="Stats" @click="$router.push('/stats')"></v-list-item>
-            <v-list-item prepend-icon="mdi-account-group-outline" title="Log" @click="$router.push('/log')"></v-list-item>
-            <v-list-item prepend-icon="mdi-logout" title="Logout" @click="logout"></v-list-item>
-          </v-list>
-        </v-navigation-drawer>
-
+        
         <v-app-bar style="padding-left: 10px; position:fixed" :elevation="4" :floating="true">
           <el-breadcrumb separator="/">
             <el-breadcrumb-item :to="{ path: '/' }">Workouts</el-breadcrumb-item>
@@ -147,10 +130,7 @@ const handleWorkoutAdded = (title) => {
   console.log('Workout added:', title);
 };
 
-const logout = () => {
-  localStorage.removeItem('token');
-  window.location.href = '/home';
-};
+
 
 onMounted(() => {
   fetchUsernameFromToken();

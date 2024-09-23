@@ -2,7 +2,7 @@
     <v-app>
       <!-- Navigation Drawer -->
       <v-main style="margin-left: 0px; padding-top: 0px;">
-         Workouts
+         Workout History
         </v-main>
       <!-- App Bar -->
       <v-app-bar style="padding-left: 10px; position:fixed" :elevation="4" :floating="true">

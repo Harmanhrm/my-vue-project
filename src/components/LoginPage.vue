@@ -1,4 +1,9 @@
 <template>
+  <v-app-bar app style="padding-left: 10px; position:fixed" :elevation="4">
+          <el-breadcrumb separator="/">
+            <el-breadcrumb-item :to="{ path: '/' }">Login</el-breadcrumb-item>
+          </el-breadcrumb>
+        </v-app-bar>
   <div class="d-flex align-center justify-center" style="height: 100vh">
     <v-card class="login-card" elevation="8" rounded="lg">
       <div class="text-subtitle-1 text-medium-emphasis">Account</div>

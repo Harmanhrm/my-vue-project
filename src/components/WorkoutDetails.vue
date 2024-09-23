@@ -1,38 +1,20 @@
 <template>
   <v-app>
     <!-- Navigation Drawer -->
-    <v-navigation-drawer app permanent style="position:fixed" :elevation="2">
-      <template v-slot:prepend>
-        <v-list-item
-          lines="two"
-          prepend-avatar="https://randomuser.me/api/portraits/women/81.jpg"
-          title="Jane Smith"
-          subtitle="Logged in"
-        ></v-list-item>
-      </template>
-
-      <v-list density="compact" nav>
-        <v-list-item prepend-icon="mdi-home-city" title="Home" @click="$router.push('/')"></v-list-item>
-        <v-list-item prepend-icon="mdi-account" title="My Account" @click="$router.push('/account')"></v-list-item>
-        <v-list-item prepend-icon="mdi-account-group-outline" title="Users" @click="$router.push('/users')"></v-list-item>
-      </v-list>
-    </v-navigation-drawer>
+    
 
     <!-- App Bar -->
-    <v-app-bar style="padding-left: 10px; position:fixed" :elevation="4" :floating="true">
-      <v-breadcrumbs :items="breadcrumbItems" separator="/">
-        <template v-slot:divider>
-          <v-icon>mdi-chevron-right</v-icon>
-        </template>
-      </v-breadcrumbs>
-    </v-app-bar>
+    <v-app-bar app style="padding-left: 10px; position:fixed" :elevation="4">
+          <el-breadcrumb separator="/">
+            <el-breadcrumb-item :to="{ path: '/Login' }">Login</el-breadcrumb-item>
+            <el-breadcrumb-item :to="{ path: '/Signup' }">SignUp</el-breadcrumb-item>
+          </el-breadcrumb>
+        </v-app-bar>
 
     <!-- Main Content Area -->
-    <v-main style="margin-left: 0px; padding-top: 30px;">
+    <v-main style="margin-left: 0px; padding-top: 0px;">
       <v-card>
-        <v-card-title class="text-h5">
-          {{ workoutTitle }}
-        </v-card-title>
+        
         <v-btn @click="viewHistory" class="ml-3" text small>
   View History
 </v-btn>
@@ -200,10 +182,7 @@ const completeWorkout = async () => {
 
 
 // Breadcrumb items
-const breadcrumbItems = [
-  { text: 'Workouts', to: '/' },
-  { text: props.workoutTitle }
-];
+
 </script>
 
 <style>
