@@ -20,7 +20,7 @@ let dbConfig = {
   user: process.env.POSTGRES_USER || 'postgres',
   host: process.env.POSTGRES_HOST || 'localhost',
   database: process.env.POSTGRES_DATABASE || 'postgres',
-  password: process.env.POSTGRES_PASSWORD || 'st1234',
+  password: process.env.POSTGRES_PASSWORD || 'Test1234',
   port: process.env.POSTGRES_PORT ? parseInt(process.env.POSTGRES_PORT, 10) : 5432,
   ssl: {
     rejectUnauthorized: false,
