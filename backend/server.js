@@ -50,7 +50,7 @@ if (process.env.POSTGRES_URL) {
         rejectUnauthorized: false,
       },
     };
-console.log('Attempting to connect to remote PostgreSQL:', dbConfig);
+console.log('Attempting to connect to remote PostgreSQL:');
 
 const remotePool = new Pool(dbConfig);
 remotePool.connect((remoteErr) => {
