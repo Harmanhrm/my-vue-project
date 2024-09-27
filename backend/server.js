@@ -3,19 +3,72 @@ const { Pool } = require('pg');
 const cors = require('cors');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
+const dotenv = require('dotenv');
+const { URL } = require('url');
+
+dotenv.config({ path: '.env' });
 
 const app = express();
 const port = 5000;
-const secretKey = 'notasecret'; // Ensure this is a valid secret key
+const secretKey = 'notasecret'; 
 
-// PostgreSQL client setup
-const pool = new Pool({
-  user: 'postgres',
-  host: 'localhost',
-  database: 'postgres',
-  password: 'Test1234',
-  port: 5432,
+/*let dbConfig = { 
+  user: process.env.DB_USER || 'postgres',
+  host: process.env.DB_HOST || 'localhost',
+  database: process.env.DB_NAME || 'postgres',
+  password: process.env.DB_PASSWORD || 'st1234',
+  port: process.env.DB_PORT ? parseInt(process.env.DB_PORT, 10) : 5432,
+};
+
+
+const pool = new Pool(dbConfig);
+*/
+
+let dbConfig = {
+  user: process.env.POSTGRES_USER || 'postgres',
+  host: process.env.POSTGRES_HOST || 'localhost',
+  database: process.env.POSTGRES_DATABASE || 'postgres',
+  password: process.env.POSTGRES_PASSWORD || 'st1234',
+  port: process.env.POSTGRES_PORT ? parseInt(process.env.POSTGRES_PORT, 10) : 5432,
+  ssl: {
+    rejectUnauthorized: false,
+  },
+};
+
+const pool = new Pool(dbConfig);
+
+if (process.env.POSTGRES_URL) {
+  try {
+    const dbUrl = new URL(process.env.POSTGRES_URL);
+    dbConfig = {
+      user: dbUrl.username,
+      host: dbUrl.hostname,
+      database: dbUrl.pathname.split('/')[1],
+      password: dbUrl.password,
+      port: dbUrl.port ? parseInt(dbUrl.port, 10) : 5432,
+      ssl: {
+        rejectUnauthorized: false,
+      },
+    };
+console.log('Attempting to connect to remote PostgreSQL:', dbConfig);
+
+const remotePool = new Pool(dbConfig);
+remotePool.connect((remoteErr) => {
+  if (remoteErr) {
+    console.error('Remote PostgreSQL connection failed:', remoteErr);
+  } else {
+    console.log('Connected to remote PostgreSQL');
+    app.locals.pool = remotePool;
+  }
 });
+} catch (error) {
+console.error('Invalid POSTGRES_URL:', error);
+}
+} else {
+console.log('Connected to local PostgreSQL');
+app.locals.pool = pool;
+}
+
 
 app.use(express.json());
 app.use(cors());
